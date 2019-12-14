@@ -4,6 +4,8 @@ import {
   Modal, Text, StyleSheet,
   Dimensions, TextInput,
   Alert,
+  Animated,
+  Easing,
   ScrollView
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -15,7 +17,8 @@ import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 //start the width in this point yes brother
 import { createStackNavigator, HeaderTitle } from 'react-navigation-stack';
 import StartGame from './switchingPage/startGame';
-import Navbar from './UiHello/Navbar';
+import AppHome from './switchingPage/Home';
+
 const window = Dimensions.get('window');
 class Darshit extends React.Component {
   constructor() {
@@ -70,13 +73,15 @@ class Darshit extends React.Component {
             <View style={style.boxText}>
               <Text style={style.choosenNum}>{this.state.selectedValue}</Text>
             </View>
-            <TouchableOpacity activeOpacity={0.1} onPress={() => {
-              this.props.navigation.navigate("StartGame");
-            }}>
-              <View>
+
+            <View>
+              <TouchableOpacity activeOpacity={0.1} onPress={() => {
+                this.props.navigation.navigate("StartGames");
+              }}>
                 <Text style={{ color: "#ff8040", marginTop: 10 }}>START GAME</Text>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+
+            </View>
           </View>
         </Box>
       )
@@ -90,71 +95,114 @@ class Darshit extends React.Component {
   render() {
     return (
       <View>
-        <Modal visible={this.state.Header} animationType="fade" onRequestClose={() => { console.log("helllo") }}>
-          <Navbar />
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View>
-              <View style={style.gameTextView}>
-                <Text style={style.gameText}>Start New Game</Text>
-              </View>
-              <Card style={style.card}>
-                <View>
-                  <ImageBackground source={require('./assets/images/yoyo.png')} style={style.image} imageStyle=
-                    {{ borderRadius: 11, opacity: 0.7 }}>
-                    <View style={style.overlay}></View>
-                    <Text style={[style.textStyle, { paddingTop: 6 }]} >Select a Number</Text>
-                    <TextInput style={style.textInput}
-                      placeholder="Number"
-                      onChangeText={this.changeText}
-                      keyboardType='phone-pad'
-                      value={this.state.value}
-                      autoCompleteType="off"
-                      autoCorrect={false}
-                      maxLength={2}
-                    />
-                  </ImageBackground>
-                  <View style={style.buttonrow}>
-                    <LinearGradient colors={["#56CCF2", "#56CCF2", "#2F80ED"]} style={style.button1}>
-
-                      <TouchableOpacity activeOpacity={0.7} onPress={this.ConfirmUser}>
-
-
-                        <Text style={style.buttonText}>Confirm</Text>
-                      </TouchableOpacity>
-                    </LinearGradient>
-                    <LinearGradient colors={["#3CA55C", "#00dbde"]} start={{ x: 1, y: 1 }} end={{ x: 0, y: 0 }} style={style.button2}>
-                      <TouchableOpacity activeOpacity={0.7} onPress={this.reset}>
-                        <Text style={style.buttonText}>Reset</Text>
-                      </TouchableOpacity>
-                    </LinearGradient>
-
-                  </View>
-                </View>
-              </Card>
-              {this.BoxView()}
-              <View>
-                <Text></Text>
-              </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View>
+            <View style={style.gameTextView}>
+              <Text style={style.gameText}>Start New Game</Text>
             </View>
-          </ScrollView>
-        </Modal>
+            <Card style={style.card}>
+              <View>
+                <ImageBackground source={require('./assets/images/yoyo.png')} style={style.image} imageStyle=
+                  {{ borderRadius: 11, opacity: 0.7 }}>
+                  <View style={style.overlay}></View>
+                  <Text style={[style.textStyle, { paddingTop: 6 }]} >Select a Number</Text>
+                  <TextInput style={style.textInput}
+                    placeholder="Number"
+                    onChangeText={this.changeText}
+                    keyboardType='phone-pad'
+                    value={this.state.value}
+                    autoCompleteType="off"
+                    autoCorrect={false}
+                    maxLength={2}
+                  />
+                </ImageBackground>
+                <View style={style.buttonrow}>
+                  <LinearGradient colors={["#56CCF2", "#56CCF2", "#2F80ED"]} style={style.button1}>
+
+                    <TouchableOpacity activeOpacity={0.7} onPress={this.ConfirmUser}>
+
+
+                      <Text style={style.buttonText}>Confirm</Text>
+                    </TouchableOpacity>
+                  </LinearGradient>
+                  <LinearGradient colors={["#3CA55C", "#00dbde"]} start={{ x: 1, y: 1 }} end={{ x: 0, y: 0 }} style={style.button2}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => {
+                      this.props.navigation.navigate("Home");
+                      this.reset
+                    }}>
+                      <Text style={style.buttonText}>Reset</Text>
+                    </TouchableOpacity>
+                  </LinearGradient>
+
+                </View>
+              </View>
+            </Card>
+            {this.BoxView()}
+            <View>
+              <Text></Text>
+            </View>
+          </View>
+        </ScrollView>
       </View>
 
     )
   }
 }
-const switchNavi = createStackNavigator({
-  StartGame: {
-    screen: StartGame
-  }
-})
-const switchNavigate = createSwitchNavigator({
+const switchNavigate = createStackNavigator({
   Home: {
-    screen: Darshit
+    screen: Darshit,
+    navigationOptions: {
+      headerTintColor: "#ffff",
+      title: "Guess the Number",
+      headerStyle: {
+        backgroundColor: "#e91e63"
+      }
+    }
   },
-  StartGame: {
-    screen: switchNavi
+  StartGames: {
+    screen: StartGame,
+    navigationOptions: ({ navigation }) => ({
+      headerTintColor: "#ffff",
+      title: "Guess the Number",
+      headerStyle: {
+        backgroundColor: "#e91e63"
+      },
+
+    })
   },
+  AppHome: {
+    screen: AppHome,
+    navigationOptions: {
+      header: null
+    }
+  }
+}, {
+  initialRouteName: "AppHome",//screen mentioned in react navigation
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 800,
+      easing: Easing.out(Easing.poly(4)),
+      timing: Animated.timing,
+    },
+    screenInterpolator: sceneProps => {
+      const { layout, position, scene } = sceneProps;
+      const { index } = scene;
+
+      const height = layout.initHeight;
+      const width = layout.initWidth;
+      const translateX = position.interpolate({
+        inputRange: [index - 1, index],
+        outputRange: [width, 0],
+      });
+
+      const opacity = position.interpolate({
+        inputRange: [index - 1, index - 0.99, index],
+        outputRange: [0, 1, 1],
+      });
+
+      return { opacity, transform: [{ translateX }] };
+    },
+  }),
 })
 export default createAppContainer(switchNavigate);
 //modal ma jyare visiblity apo tyare te modal new te start thase

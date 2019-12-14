@@ -9,12 +9,11 @@ import {
     Keyboard,
     ScrollView
 } from 'react-native';
-import Navbar from '../UiHello/Navbar';
 class StartGame extends React.Component {
     render() {
         return (
             <View>
-
+                <Text>Hello i am here</Text>
             </View>
         )
     }
