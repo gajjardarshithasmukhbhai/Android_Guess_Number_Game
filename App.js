@@ -8,6 +8,7 @@ import {
   Easing,
   ScrollView
 } from 'react-native';
+
 import LinearGradient from 'react-native-linear-gradient';
 import Card from './component/card';
 import Box from './component/box';
@@ -18,7 +19,9 @@ import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createStackNavigator, HeaderTitle } from 'react-navigation-stack';
 import StartGame from './switchingPage/startGame';
 import AppHome from './switchingPage/Home';
-
+// import { setJS0ExceptionHandler, getJSExceptionHandler } from 'react-native-exception-handler';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { createDrawerNavigator } from 'react-navigation-drawer';
 const window = Dimensions.get('window');
 class Darshit extends React.Component {
   constructor() {
@@ -148,17 +151,29 @@ class Darshit extends React.Component {
     )
   }
 }
+class Logout extends React.Component {
+  render() {
+    return (
+      <View>
+        <Text>Hello Gajjar darshit</Text>
+      </View>
+    )
+  }
+}
 const switchNavigate = createStackNavigator({
   Home: {
     screen: Darshit,
-    navigationOptions: {
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: <Icon name="md-menu" size={26} style={{ marginLeft: 16, color: "#ffff" }} onPress={navigation.openDrawer} />,
       headerTintColor: "#ffff",
       title: "Guess the Number",
       headerStyle: {
         backgroundColor: "#e91e63"
       }
-    }
-  },
+    })
+  }
+})
+const switchNavigates = createStackNavigator({
   StartGames: {
     screen: StartGame,
     navigationOptions: ({ navigation }) => ({
@@ -169,42 +184,69 @@ const switchNavigate = createStackNavigator({
       },
 
     })
-  },
+  }
+})
+
+const switchN = createStackNavigator({
   AppHome: {
     screen: AppHome,
     navigationOptions: {
       header: null
     }
   }
-}, {
-  initialRouteName: "AppHome",//screen mentioned in react navigation
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 800,
-      easing: Easing.out(Easing.poly(4)),
-      timing: Animated.timing,
-    },
-    screenInterpolator: sceneProps => {
-      const { layout, position, scene } = sceneProps;
-      const { index } = scene;
-
-      const height = layout.initHeight;
-      const width = layout.initWidth;
-      const translateX = position.interpolate({
-        inputRange: [index - 1, index],
-        outputRange: [width, 0],
-      });
-
-      const opacity = position.interpolate({
-        inputRange: [index - 1, index - 0.99, index],
-        outputRange: [0, 1, 1],
-      });
-
-      return { opacity, transform: [{ translateX }] };
-    },
-  }),
 })
-export default createAppContainer(switchNavigate);
+// , {
+//   initialRouteName: "AppHome",//screen mentioned in react navigation
+//   transitionConfig: () => ({
+//     transitionSpec: {
+//       duration: 500,
+//       easing: Easing.out(Easing.poly(4)),
+//       timing: Animated.timing,
+//     },
+//     screenInterpolator: sceneProps => {
+//       const { layout, position, scene } = sceneProps;
+//       const { index } = scene;
+
+//       const height = layout.initHeight;
+//       const width = layout.initWidth;
+//       const translateX = position.interpolate({
+//         inputRange: [index - 1, index],
+//         outputRange: [width, 0],
+//       });
+
+//       const opacity = position.interpolate({
+//         inputRange: [index - 1, index - 0.99, index],
+//         outputRange: [0, 1, 1],
+//       });
+
+//       return { opacity, transform: [{ translateX }] };
+//     },
+//   }),
+// })
+const drawers = createDrawerNavigator({
+  LogIn: {
+    screen: switchN,
+
+  },
+  Logout: {
+    screen: switchNavigates
+  },
+  After: {
+    screen: switchNavigate
+  }
+},
+  {
+
+    drawerBackgroundColor: "#e91e63"
+  }
+)
+
+const Sw = createSwitchNavigator({
+  Drawer: {
+    screen: drawers
+  }
+})
+export default createAppContainer(Sw);
 //modal ma jyare visiblity apo tyare te modal new te start thase
 //so evu nai ke man fave tya modal tya banavi devu :-)
 const style = StyleSheet.create({

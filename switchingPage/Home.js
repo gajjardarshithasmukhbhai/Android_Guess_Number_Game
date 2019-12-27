@@ -13,14 +13,37 @@ import {
 import Sound from 'react-native-sound';
 import Icon from 'react-native-vector-icons/AntDesign';
 import * as Animate from 'react-native-animatable';
-import { firebaseConfig } from '../config';
-import * as firebase from 'firebase';
-firebase.initializeApp(firebaseConfig);
-import AsyncStorage from '@react-native-community/async-storage';
+// import * as firebase from 'firebase';
+import { GoogleSignin, statusCodes } from '@react-native-community/google-signin';
+type ErrorWithCode = Error & { code?: string };
+
+type State = {
+    error: ?ErrorWithCode,
+    userInfo: ?User,
+};
+
+GoogleSignin.configure({
+    webClientId: '252313230809-u42fpomjtdgmtb8pim36gkirep5ib202.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+
+    offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+});
+// var fireconfig = {
+//     apiKey: "AIzaSyDfAIUGQmIno5V4nBjyITVK8cfIQlcq8qU",
+//     authDomain: "guessmynumber-c1f03.firebaseapp.com",
+//     databaseURL: "https://guessmynumber-c1f03.firebaseio.com",
+//     projectId: "guessmynumber-c1f03",
+//     storageBucket: "guessmynumber-c1f03.appspot.com",
+//     messagingSenderId: "252313230809",
+//     appId: "1:252313230809:web:19bd6aba1e0cc678efcdc8",
+//     measurementId: "G-TQMKV20352"
+// };
+// if (!firebase.apps.length) {
+//     firebase.initializeApp(fireconfig);
+// }
 const window = Dimensions.get("window");
-Sound.setCategory('Playback');
+// Sound.setCategory('Playback');
 // setTimeout(() => {
-//     var whoosh = new Sound('live_the_moment.mp3', Sound.MAIN_BUNDLE, (error) => {
+//     var whoosh = new Sound('my_music.mp3', Sound.MAIN_BUNDLE, (error) => {
 //         if (error) {
 //             console.log('failed to load the sound', error);
 //             return;
@@ -34,7 +57,8 @@ Sound.setCategory('Playback');
 //             if (success) {
 //                 console.log('successfully finished playing');
 //             } else {
-//                 console.log('playback failed due to audio decoding errors');
+//                 console.
+//                     log('playback failed due to audio decoding errors');
 //             }
 //         });
 
@@ -42,7 +66,76 @@ Sound.setCategory('Playback');
 // }, 1);
 
 class AppHome extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            hello: "gajju"
+        }
+        this.googleLogin = this.googleLogin.bind(this);
+        this.googogin = this.signOut.bind(this);
+    }
+    componentWillmount() {
+        console.log("gajjar how are you");
+    }
+    componentDidMount() {
+        console.log("ga");
 
+        try {
+            const userInfo = GoogleSignin.signInSilently();
+            // this.setState({ userInfo, error: null });
+            userInfo
+                .then(ed => {
+                    this.props.navigation.navigate("Home");
+
+                })
+                .catch(err => {
+                    this.props.navigation.navigate("AppHome");
+                });
+
+
+        } catch (error) {
+
+            const errorMessage =
+                error.code === statusCodes.SIGN_IN_REQUIRED ? 'Please sign in :)' : error.message;
+            this.setState({
+                error: new Error(errorMessage),
+            });
+        }
+
+    }
+
+    signOut = async () => {
+        try {
+            await GoogleSignin.revokeAccess();
+            await GoogleSignin.signOut();
+            this.setState({ user: null }); // Remember to remove the user from your app's state as well
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    googleLogin = async () => {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            // this.setState({ userInfo });
+            if (userInfo) {
+                console.log(userInfo);
+                this.props.navigation.navigate("Home");
+            }
+        } catch (error) {
+            console.log("hello-----------------", error.message);
+
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                // user cancelled the login flow
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                // operation (f.e. sign in) is in progress already
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                // play services not available or outdated
+            } else {
+                // some other error happened
+            }
+        }
+    }
     render() {
         return (
             <View style={{ flexDirection: "column" }}>
@@ -75,14 +168,14 @@ class AppHome extends React.Component {
                     <View>
                         <TouchableOpacity activeOpacity={0.8}
                             onPress={() => {
-
-                                this.props.navigation.navigate("Home");
+                                this.googleLogin();
+                                console.log("kem che dr");
                             }}>
                             <View style={style.Googlesignin}>
                                 <View style={{ margin: 8 }}>
                                     <Image source={require("../assets/images/google.png")} style={{ width: 33, height: 33 }} />
                                 </View>
-                                <View style={{ backgroundColor: "#E91E63", height: 50, width: window.width - 120, alignSelf: "flex-end", borderTopRightRadius: 5, borderBottomRightRadius: 5, marginVertical: window.width - 410 }}>
+                                <View style={{ backgroundColor: "#E91E63", height: 53, width: window.width - 120, alignSelf: "flex-end", borderTopRightRadius: 5, borderBottomRightRadius: 5, marginVertical: -49 }}>
                                     <Text style={{ fontFamily: "Roboto-Black", alignSelf: "center", marginTop: 8, fontSize: 20, color: "white" }}>Google signIn</Text>
                                 </View>
                             </View>
@@ -91,14 +184,14 @@ class AppHome extends React.Component {
                     </View>
                     <View>
                         <TouchableOpacity activeOpacity={0.8} onPress={() => {
-                            console.log("MOM");
+                            this.signOut();
                         }}>
                             {/* 2 faceBook Button */}
                             <View style={style.FaceBooksignin}>
                                 <View style={{ margin: 8 }}>
                                     <Image source={require("../assets/images/facebook.png")} style={{ width: 33, height: 33 }} />
                                 </View>
-                                <View style={{ marginVertical: window.width - 410 }}>
+                                <View style={{ marginVertical: -48 }}>
                                     <Text style={{ fontFamily: "Roboto-Black", alignSelf: "center", marginTop: 8, fontSize: 20, color: "#E91E63", marginLeft: 65 }}>FaceBook signIn</Text>
                                 </View>
                             </View>
@@ -131,7 +224,7 @@ const style = StyleSheet.create({
         // marginVertical: window.width - 240,
         marginTop: 110,
         width: window.width - 40,
-        height: window.height - 590,
+        height: 54,
         borderRadius: 6,
         borderWidth: 1,
         elevation: 2,
@@ -140,7 +233,7 @@ const style = StyleSheet.create({
     FaceBooksignin: {
         marginTop: 20,
         width: window.width - 40,
-        height: window.height - 590,
+        height: 54,
         borderRadius: 6,
         borderWidth: 1,
         borderColor: "#E91E63",
