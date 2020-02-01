@@ -155,6 +155,7 @@ class Darshit extends React.Component {
     )
   }
 }
+
 class Logout extends React.Component {
   render() {
     return (
@@ -196,7 +197,7 @@ const switchNavigate = createStackNavigator({
   }
 },
   {
-    initialRouteName: "AppHome",//screen mentioned in react navigation
+    initialRouteName: "Home",//screen mentioned in react navigation
     transitionConfig: () => ({
       transitionSpec: {
         duration: 500,
@@ -225,6 +226,30 @@ const switchNavigate = createStackNavigator({
   }
 )
 
+const CustomDrawerNavigator = (props) => {
+  return (
+    <View>
+      <View style={{ backgroundColor: "#fff", height: window.height - 490 }}>
+        <View style={{
+          borderRadius: 60,
+          width: 90,
+          height: 90,
+          borderColor: "#e91e63",
+          borderWidth: 3,
+          margin: 20,
+        }}>
+
+        </View>
+        <Text>Hello user</Text>
+      </View>
+      <View>
+        <Text>hello</Text>
+
+        {/* start the dataset */}
+      </View>
+    </View>
+  );
+}
 const drawers = createDrawerNavigator({
   LogIn: {
     screen: switchNavigate,
@@ -258,7 +283,10 @@ const drawers = createDrawerNavigator({
   }
 },
   {
-
+    contentComponent: CustomDrawerNavigator,
+    drawerOpenRoute: 'DrawerOpen',
+    drawerCloseRoute: 'DrawerClose',
+    drawerToggleRoute: 'DrawerToggle',
     drawerBackgroundColor: "#e91e63",
     contentOptions: {
       activeTintColor: 'white',
