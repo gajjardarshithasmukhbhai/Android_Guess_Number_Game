@@ -6,7 +6,8 @@ import {
   Alert,
   Animated,
   Easing,
-  ScrollView
+  ScrollView,
+  Image
 } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
@@ -229,19 +230,27 @@ const switchNavigate = createStackNavigator({
 const CustomDrawerNavigator = (props) => {
   return (
     <View>
-      <View style={{ backgroundColor: "#fff", height: window.height - 490 }}>
-        <View style={{
-          borderRadius: 60,
-          width: 90,
-          height: 90,
-          borderColor: "#e91e63",
-          borderWidth: 3,
-          margin: 20,
-        }}>
+      <ImageBackground source={require('./assets/images/side.png')} style={{ backgroundColor: "#fff", height: window.height - 490 }}>
+        <View>
+
+
+          <Image source={{ uri: 'https://avatars3.githubusercontent.com/u/34138770?s=460&v=4' }}
+            style={{
+              borderRadius: 60,
+              width: 90,
+              height: 90,
+              borderColor: "#e91e63",
+              borderWidth: 3,
+              margin: 20
+            }} />
 
         </View>
-        <Text>Hello user</Text>
-      </View>
+        <View>
+          <Text style={style.sidebarText}>Darshit Gajjar</Text>
+        </View>
+
+      </ImageBackground>
+
       <View>
         <Text>hello</Text>
 
@@ -405,5 +414,11 @@ const style = StyleSheet.create({
     width: window.width - 30,
     height: window.height / 2 - 30,
     resizeMode: "cover",
+  },
+  sidebarText: {
+    fontSize: 20,
+    marginVertical: -80,
+    color: "#ffff",
+    marginLeft: 130,
   }
 })
