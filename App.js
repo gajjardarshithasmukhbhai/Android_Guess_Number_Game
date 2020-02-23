@@ -20,26 +20,59 @@ import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createStackNavigator, HeaderTitle } from 'react-navigation-stack';
 import StartGame from './switchingPage/startGame';
 import AppHome from './switchingPage/Home';
+import Aboutus from './switchingPage/about';
 // import { setJS0ExceptionHandler, getJSExceptionHandler } from 'react-native-exception-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import Icons from 'react-native-vector-icons/Entypo';
 import Icons2 from 'react-native-vector-icons/AntDesign';
+import { GoogleSignin, statusCodes } from '@react-native-community/google-signin';
+import firebase from 'firebase';
 
-import { createDrawerNavigator } from 'react-navigation-drawer';
+import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer';
 const window = Dimensions.get('window');
+let imgSrc;
+let name;
+
 class Darshit extends React.Component {
+
+
   constructor() {
     super();
     this.state = {
       Header: true,
       value: "",
       Confirm: false,
-      selectedValue: ""
+      selectedValue: "",
+      name: "",
+      id: "",
+      imgSrc: "",
+      email: ""
     }
     this.changeText = this.changeText.bind(this);
     this.ConfirmUser = this.ConfirmUser.bind(this);
     this.BoxView = this.BoxView.bind(this);
+  }
+  componentDidMount() {
+    console.log("ga");
+
+    try {
+      const userInfo = GoogleSignin.signInSilently();
+      // this.setState({ userInfo, error: null });
+      userInfo
+        .then(ed => {
+          imgSrc = ed.user.photo;
+          name = ed.user.name;
+
+        })
+        .catch(err => {
+          this.props.navigation.navigate("AppHome");
+        });
+
+    } catch (error) {
+      console.log(error);
+    }
+
   }
   changeText = (NumberValue) => {
     if (parseInt(NumberValue) > 0) {
@@ -195,10 +228,11 @@ const switchNavigate = createStackNavigator({
     navigationOptions: {
       header: null
     }
-  }
+  },
+
 },
   {
-    initialRouteName: "Home",//screen mentioned in react navigation
+    initialRouteName: "AppHome",//screen mentioned in react navigation
     transitionConfig: () => ({
       transitionSpec: {
         duration: 500,
@@ -234,26 +268,26 @@ const CustomDrawerNavigator = (props) => {
         <View>
 
 
-          <Image source={{ uri: 'https://avatars3.githubusercontent.com/u/34138770?s=460&v=4' }}
+          <Image source={{ uri: `${imgSrc}` }}
             style={{
               borderRadius: 60,
               width: 90,
               height: 90,
               borderColor: "#e91e63",
               borderWidth: 3,
-              margin: 20
+              margin: 20,
+              marginTop: 24
             }} />
 
         </View>
         <View>
-          <Text style={style.sidebarText}>Darshit Gajjar</Text>
+          <Text style={style.sidebarText}>{name}</Text>
         </View>
 
       </ImageBackground>
 
       <View>
-        <Text>hello</Text>
-
+        <DrawerItems {...props} />
         {/* start the dataset */}
       </View>
     </View>
@@ -264,9 +298,10 @@ const drawers = createDrawerNavigator({
     screen: switchNavigate,
 
     navigationOptions: ({ navigation }) => ({
-      title: `Warship Score`,
+      title: `Home`,
+
       drawerIcon: ({ tintColor }) => (
-        <Icons name="user" size={27} color={tintColor} />
+        <Icons name="home" size={27} color={tintColor} />
       ),
 
 
@@ -274,9 +309,8 @@ const drawers = createDrawerNavigator({
 
 
   },
-
   After: {
-    screen: switchNavigate,
+    screen: Aboutus,
     contentOptions: {
       activeTintColor: "#ffff",
       labelStyle: {
@@ -289,7 +323,23 @@ const drawers = createDrawerNavigator({
         <Icons name="users" size={24} color={tintColor} />
       ),
     }),
+  },
+  Logout: {
+    screen: Aboutus,
+    contentOptions: {
+      activeTintColor: "#ffff",
+      labelStyle: {
+        fontFamily: 'open-sans-bold'
+      }
+    },
+    navigationOptions: ({ navigation }) => ({
+      title: `Logout`,
+      drawerIcon: ({ tintColor }) => (
+        <Icons2 name="logout" size={24} color={tintColor} />
+      ),
+    }),
   }
+
 },
   {
     contentComponent: CustomDrawerNavigator,
@@ -297,18 +347,18 @@ const drawers = createDrawerNavigator({
     drawerCloseRoute: 'DrawerClose',
     drawerToggleRoute: 'DrawerToggle',
     drawerBackgroundColor: "#e91e63",
+
     contentOptions: {
       activeTintColor: 'white',
       inactiveTintColor: 'white',
       activeBackgroundColor: "#ef5cc6",
       labelStyle: {
-        fontSize: 29,
-        fontFamily: "Cookie-Regular",
-        fontWeight: 'normal'
+        fontSize: 20,
+        fontWeight: 'normal',
+        color: 'white',
+        marginVertical: 15
       },
-      itemsContainerStyle: {
-        marginVertical: 220,
-      },
+
     },
   }
 )
@@ -417,8 +467,9 @@ const style = StyleSheet.create({
   },
   sidebarText: {
     fontSize: 20,
-    marginVertical: -80,
     color: "#ffff",
-    marginLeft: 130,
+    marginLeft: 25,
+    fontWeight: "bold",
+    marginVertical: -18,
   }
 })

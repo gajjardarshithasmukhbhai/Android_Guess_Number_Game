@@ -13,10 +13,21 @@ import {
 import Sound from 'react-native-sound';
 import Icon from 'react-native-vector-icons/AntDesign';
 import * as Animate from 'react-native-animatable';
+import firebase from 'firebase';
 // import * as firebase from 'firebase';
 import { GoogleSignin, statusCodes } from '@react-native-community/google-signin';
+const uuidv1 = require('uuid/v1');
 type ErrorWithCode = Error & { code?: string };
-
+var firebaseConfig = {
+    apiKey: "AIzaSyD79GDVoLd8A7AJnPYdoNcUsKmbahn3MiI",
+    authDomain: "guessmynumber-c1f03.firebaseapp.com",
+    databaseURL: "https://guessmynumber-c1f03.firebaseio.com",
+    projectId: "guessmynumber-c1f03",
+    storageBucket: "guessmynumber-c1f03.appspot.com",
+    messagingSenderId: "252313230809",
+    appId: "1:252313230809:web:492e389ebe4a1c5fefcdc8",
+    measurementId: "G-SWJ30F97T4"
+};
 type State = {
     error: ?ErrorWithCode,
     userInfo: ?User,
@@ -27,64 +38,69 @@ GoogleSignin.configure({
 
     offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
 });
-// var fireconfig = {
-//     apiKey: "AIzaSyDfAIUGQmIno5V4nBjyITVK8cfIQlcq8qU",
-//     authDomain: "guessmynumber-c1f03.firebaseapp.com",
-//     databaseURL: "https://guessmynumber-c1f03.firebaseio.com",
-//     projectId: "guessmynumber-c1f03",
-//     storageBucket: "guessmynumber-c1f03.appspot.com",
-//     messagingSenderId: "252313230809",
-//     appId: "1:252313230809:web:19bd6aba1e0cc678efcdc8",
-//     measurementId: "G-TQMKV20352"
-// };
-// if (!firebase.apps.length) {
-//     firebase.initializeApp(fireconfig);
-// }
+
+// Initialize Firebase
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+
+console.log("==++", firebase);
+
 const window = Dimensions.get("window");
-// Sound.setCategory('Playback');
-// setTimeout(() => {
-//     var whoosh = new Sound('my_music.mp3', Sound.MAIN_BUNDLE, (error) => {
-//         if (error) {
-//             console.log('failed to load the sound', error);
-//             return;
-//         }
-//         // loaded successfully
-//         console.log('duration in seconds: ' + whoosh.getDuration() + 'number of channels: ' + whoosh.getNumberOfChannels());
+Sound.setCategory('Playback');
+setTimeout(() => {
+    var whoosh = new Sound('my_music.mp3', Sound.MAIN_BUNDLE, (error) => {
+        if (error) {
+            console.log('failed to load the sound', error);
+            return;
+        }
+        // loaded successfully
+        console.log('duration in seconds: ' + whoosh.getDuration() + 'number of channels: ' + whoosh.getNumberOfChannels());
 
-//         // Play the sound with an onEnd callback
+        // Play the sound with an onEnd callback
 
-//         whoosh.play((success) => {
-//             if (success) {
-//                 console.log('successfully finished playing');
-//             } else {
-//                 console.
-//                     log('playback failed due to audio decoding errors');
-//             }
-//         });
+        whoosh.play((success) => {
+            if (success) {
+                console.log('successfully finished playing');
+            } else {
+                console.
+                    log('playback failed due to audio decoding errors');
+            }
+        });
 
-//     });
-// }, 1);
+    });
+}, 1);
 
 class AppHome extends React.Component {
     constructor() {
         super();
         this.state = {
-            hello: "gajju"
+            id: "",
+            name: "",
+            imgSrc: "",
+            email: ""
         }
         this.googleLogin = this.googleLogin.bind(this);
-        this.googogin = this.signOut.bind(this);
+        this.faceBook = this.faceBook.bind(this);
     }
     componentWillmount() {
         console.log("gajjar how are you");
+
+
+
     }
     componentDidMount() {
-        console.log("ga");
+        console.log("gajjar->");
 
         try {
             const userInfo = GoogleSignin.signInSilently();
             // this.setState({ userInfo, error: null });
             userInfo
                 .then(ed => {
+                    console.log("))-->");
+                    console.log("Hello", ed);
                     this.props.navigation.navigate("Home");
 
                 })
@@ -95,16 +111,13 @@ class AppHome extends React.Component {
 
         } catch (error) {
 
-            const errorMessage =
-                error.code === statusCodes.SIGN_IN_REQUIRED ? 'Please sign in :)' : error.message;
-            this.setState({
-                error: new Error(errorMessage),
-            });
+            console.log(error.message());
+
         }
 
     }
 
-    signOut = async () => {
+    faceBook = async () => {
         try {
             await GoogleSignin.revokeAccess();
             await GoogleSignin.signOut();
@@ -119,8 +132,22 @@ class AppHome extends React.Component {
             const userInfo = await GoogleSignin.signIn();
             // this.setState({ userInfo });
             if (userInfo) {
-                console.log(userInfo);
+                console.log("-->", userInfo);
+                let id = uuidv1();
+                firebase.database().ref('users/').set({
+                    email: "Gajjar Darshit",
+                    fname: "123456",
+                    lname: "123456"
+                }).then((data) => {
+                    //success callback
+                    console.log('data ', data)
+                }).catch((error) => {
+                    //error callback
+                    console.log('error ', error)
+                });
+
                 this.props.navigation.navigate("Home");
+
             }
         } catch (error) {
             console.log("hello-----------------", error.message);
@@ -184,7 +211,7 @@ class AppHome extends React.Component {
                     </View>
                     <View>
                         <TouchableOpacity activeOpacity={0.8} onPress={() => {
-                            this.signOut();
+                            this.faceBook();
                         }}>
                             {/* 2 faceBook Button */}
                             <View style={style.FaceBooksignin}>
