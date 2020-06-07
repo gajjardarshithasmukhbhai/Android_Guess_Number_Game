@@ -14,5 +14,3 @@ In this Game various technology invlove loke web-services in ExpressJs and React
   <a style="padding: 10px; display: inline-block;"><img src="https://i.imgur.com/Uo97x64.png" alt="web" title="web" /></a>
   <a style="padding: 10px; display: inline-block;"><img src="https://i.imgur.com/jgZp3W2.png" alt="native" title="native" /></a>
 </p>
-
-# this App is Under construction Phase
